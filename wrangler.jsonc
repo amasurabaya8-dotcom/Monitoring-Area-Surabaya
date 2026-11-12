@@ -10,9 +10,10 @@
     "run_worker_first": ["/api/*"]
   },
   "vars": {
-    // Isi di Cloudflare Dashboard > Worker > Settings > Variables and Secrets
-    // SUPABASE_URL      (Text)   : https://xxxx.supabase.co
-    // SUPABASE_ANON_KEY (Secret) : anon/publishable key
+    // Project Supabase: monitoring-area-surabaya (ap-southeast-1)
+    // Publishable key memang untuk publik; data dilindungi RLS (anon hanya bisa SELECT).
+    "SUPABASE_URL": "https://cxnrczsfxdyaiknagtth.supabase.co",
+    "SUPABASE_ANON_KEY": "sb_publishable_mFXmcMVQ0aMzng2DWExVkQ_FtCOKgy0"
   },
   "observability": { "enabled": true }
 }

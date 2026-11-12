@@ -16,14 +16,12 @@ wrangler.jsonc             konfigurasi Cloudflare
 
 ## Setup koneksi (sekali saja)
 
-1. **Supabase** → buat/pilih project → *SQL Editor*: jalankan `supabase/schema.sql`, lalu `supabase/seed.sql` (aman dijalankan ulang).
-   Lalu *Project Settings > API*: salin **Project URL** dan **anon / publishable key**.
+1. **Supabase** ✓ sudah terpasang: project `monitoring-area-surabaya` (`cxnrczsfxdyaiknagtth`, Singapore), skema + seed sudah dijalankan.
+   URL & publishable key sudah ada di `wrangler.jsonc` (key publik, data dilindungi RLS).
    Input realisasi: *Table Editor → progress_rayon* (kolom `realisasi`, `status`, `pic`, `update_terakhir`, `catatan`, `link_bukti`).
 2. **Cloudflare** → *Workers & Pages > Create > Import a repository* → pilih `amasurabaya8-dotcom/Monitoring-Area-Surabaya`, branch `main`.
    - Build command: *(kosongkan)* · Deploy command: `npx wrangler deploy`
-3. Setelah worker jadi → *Settings > Variables and Secrets*:
-   - `SUPABASE_URL` (Text) = Project URL
-   - `SUPABASE_ANON_KEY` (Secret) = anon key
+3. Variabel Supabase sudah ikut dari `wrangler.jsonc`, tidak perlu diisi manual.
 4. Buka `https://monitoring-area-surabaya.<akun>.workers.dev/status.html` → semua status harus ✓.
    Web utama di `/`, peta di `/peta-trial.html`. Realisasi di web otomatis terbaca dari tabel `progress_rayon`.
 

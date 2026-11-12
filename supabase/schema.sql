@@ -77,7 +77,7 @@ create table if not exists trial_titik (
 );
 
 -- updated_at otomatis
-create or replace function set_updated_at() returns trigger language plpgsql as $$
+create or replace function set_updated_at() returns trigger language plpgsql set search_path = '' as $$
 begin new.updated_at = now(); return new; end $$;
 drop trigger if exists trg_progress_upd on progress_rayon;
 create trigger trg_progress_upd before update on progress_rayon for each row execute function set_updated_at();

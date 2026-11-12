@@ -15,7 +15,8 @@ async function supabase(env, path, init = {}) {
     ...init,
     headers: {
       apikey: env.SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`,
+      // key lama (JWT eyJ…) juga dikirim sebagai Bearer; key baru sb_publishable_ cukup di header apikey
+      ...(env.SUPABASE_ANON_KEY.startsWith("eyJ") ? { Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } : {}),
       "Content-Type": "application/json",
       ...(init.headers || {}),
     },
