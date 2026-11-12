@@ -224,8 +224,8 @@ class Component extends DCLogic {
     var trend = dord.sort().map(function (k) { return { tgl: fmt(k), t: num(dmap[k].t), a: num(dmap[k].a), ach: pctTxt(dmap[k].a, dmap[k].t) }; });
     var det = KPI.detail.filter(function (r) { return ids[r[0]]; });
     var tc = function (s) { return s.split(' ').map(function (w) { return w ? w[0].toUpperCase() + w.slice(1) : w; }).join(' '); };
-    var cnt1 = function (idx) { var m = {}; det.forEach(function (r) { var k = r[idx] ? tc(String(r[idx]).toLowerCase()) : '—'; m[k] = (m[k] || 0) + 1; }); return Object.keys(m).sort(function (a, b) { return m[b] - m[a]; }).map(function (k) { return { k: k, n: m[k] }; }); };
-    var bumo = cnt1(1).slice(0, 5).map(function (x, i) { return { no: i + 1, b: x.k, n: x.n, p: pctTxt(x.n, det.length) }; });
+    var cnt1 = function (idx, raw) { var m = {}; det.forEach(function (r) { var k = r[idx] ? (raw ? String(r[idx]) : tc(String(r[idx]).toLowerCase())) : '—'; m[k] = (m[k] || 0) + 1; }); return Object.keys(m).sort(function (a, b) { return m[b] - m[a]; }).map(function (k) { return { k: k, n: m[k] }; }); };
+    var bumo = cnt1(1, true).slice(0, 5).map(function (x, i) { return { no: i + 1, b: x.k, n: x.n, p: pctTxt(x.n, det.length) }; });
     var shades = [['#1D4ED8', '#FFFFFF'], ['#60A5FA', '#0F1B2D'], ['#BFDBFE', '#0F1B2D'], ['#E5E7EB', '#0F1B2D']];
     var persepsi = [['Rasa', 2], ['Kemasan', 3], ['Harga', 4]].map(function (q) {
       return { k: q[0], seg: cnt1(q[1]).map(function (x, i) { var w = x.n / (det.length || 1) * 100, s = shades[Math.min(i, 3)]; return { lbl: w >= 18 ? x.k + ' ' + Math.round(w) + '%' : '', tip: x.k + ': ' + x.n + ' responden', style: 'width: ' + w.toFixed(2) + '%; background: ' + s[0] + '; color: ' + s[1] + '; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden' }; }) };
