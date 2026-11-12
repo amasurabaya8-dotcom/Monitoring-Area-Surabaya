@@ -1,0 +1,147 @@
+{
+ "sumber": "Form_Monitoring_Promotor_by_Area_2026_CY_12.xlsx (sheet Detail Trial)",
+ "cycle": "CY 12-2026",
+ "data_sampai": "2026-11-09",
+ "catatan": "Tanpa nama/no HP responden dan tanpa ID karyawan; titik digabung per ~100 m.",
+ "promotor": [
+  {
+   "id": "p1",
+   "nama": "M Dwi Cahyono",
+   "rayon": "Surabaya Timur",
+   "trial": 18,
+   "target_td": 35,
+   "color": "#E0B341"
+  },
+  {
+   "id": "p2",
+   "nama": "Donny Rahmat Efendi",
+   "rayon": "Surabaya Timur",
+   "trial": 7,
+   "target_td": 35,
+   "color": "#8FB3BD"
+  },
+  {
+   "id": "p3",
+   "nama": "Muchamad Arif Kurnia Al Haqi",
+   "rayon": "Surabaya Timur",
+   "trial": 0,
+   "target_td": 35,
+   "color": "#5B6290"
+  },
+  {
+   "id": "p4",
+   "nama": "Bakhrul Ulum",
+   "rayon": "Surabaya Barat",
+   "trial": 0,
+   "target_td": 35,
+   "color": "#7FB2E0"
+  },
+  {
+   "id": "p5",
+   "nama": "Wahyudi Slamet",
+   "rayon": "Gresik",
+   "trial": 0,
+   "target_td": 35,
+   "color": "#D9822B"
+  },
+  {
+   "id": "p6",
+   "nama": "Rahmat Arisandi",
+   "rayon": "Sidoarjo Timur",
+   "trial": 0,
+   "target_td": 35,
+   "color": "#4F9D69"
+  },
+  {
+   "id": "p7",
+   "nama": "Deva Wenandiarsa Putra Arifin",
+   "rayon": "Sidoarjo Timur",
+   "trial": 4,
+   "target_td": 35,
+   "color": "#B05FA0"
+  },
+  {
+   "id": "p8",
+   "nama": "M Abyan Ar Royyan Fahmiansyah",
+   "rayon": "Sidoarjo Barat",
+   "trial": 13,
+   "target_td": 35,
+   "color": "#9A8C7A"
+  }
+ ],
+ "titik": [
+  {
+   "p": "p7",
+   "lat": -7.44498,
+   "lng": 112.69383,
+   "head": 4,
+   "lokasi": "Warkop",
+   "bumo_top": [
+    "Mild",
+    "Dunhill",
+    "Marlong"
+   ],
+   "tanggal": [
+    "2026-11-09"
+   ]
+  },
+  {
+   "p": "p2",
+   "lat": -7.27709,
+   "lng": 112.74079,
+   "head": 2,
+   "lokasi": "Warkop",
+   "bumo_top": [
+    "Came Mild",
+    "Camel Mild"
+   ],
+   "tanggal": [
+    "2026-11-09"
+   ]
+  },
+  {
+   "p": "p2",
+   "lat": -7.25999,
+   "lng": 112.75036,
+   "head": 5,
+   "lokasi": "Warkop",
+   "bumo_top": [
+    "Surya12",
+    "Surya"
+   ],
+   "tanggal": [
+    "2026-11-09"
+   ]
+  },
+  {
+   "p": "p1",
+   "lat": -7.27598,
+   "lng": 112.76276,
+   "head": 18,
+   "lokasi": "Warkop",
+   "bumo_top": [
+    "Sampoerna Refill 12",
+    "Malboro Filter Black",
+    "Gg Surya 12"
+   ],
+   "tanggal": [
+    "2026-11-09"
+   ]
+  },
+  {
+   "p": "p8",
+   "lat": -7.35878,
+   "lng": 112.68359,
+   "head": 13,
+   "lokasi": "Warkop",
+   "bumo_top": [
+    "La Purple",
+    "Marlong",
+    "Djarum Super Filter"
+   ],
+   "tanggal": [
+    "2026-11-09"
+   ]
+  }
+ ]
+}

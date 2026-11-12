@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Peta Penetrasi Trial — Area Surabaya</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <style>
+    :root { --bg:#0F1B2D; --panel:#16243A; --line:#2A3B56; --text:#F3F6FA; --muted:#A7B4C6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 20px 16px 32px; display: flex; flex-direction: column; gap: 14px; }
+    header { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: flex-end; }
+    h1 { margin: 0; font-size: 22px; }
+    .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 10px; }
+    .filters label { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--muted); }
+    select { min-height: 36px; min-width: 170px; font: inherit; font-size: 14px; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; }
+    #map { height: 520px; border-radius: 12px; border: 1px solid var(--line); background: #e9ebee; }
+    .stats { display: flex; flex-wrap: wrap; gap: 10px; }
+    .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; min-width: 150px; }
+    .stat b { display: block; font-size: 20px; }
+    .stat span { font-size: 12px; color: var(--muted); }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 8px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { color: var(--muted); font-weight: 600; }
+    td.r, th.r { text-align: right; }
+    .box { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; overflow-x: auto; }
+    .note { font-size: 12px; color: var(--muted); }
+    a { color: #7FB2E0; }
+    .leaflet-popup-content { font-size: 13px; line-height: 1.45; }
+    footer { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    @media (max-width: 640px) { #map { height: 420px; } select { min-width: 140px; } }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Peta penetrasi trial per promotor</h1>
+      <div class="sub" id="sub">Memuat data…</div>
+    </div>
+    <div class="filters">
+      <label for="f-rayon">Rayon<select id="f-rayon"></select></label>
+      <label for="f-prom">Promotor<select id="f-prom"></select></label>
+      <label for="f-tema">Peta<select id="f-tema"><option value="terang">Terang</option><option value="gelap">Gelap</option></select></label>
+    </div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+  <div id="map" role="region" aria-label="Peta sebaran trial"></div>
+  <div class="legend" id="legend"></div>
+  <p class="note">Ukuran lingkaran = jumlah head trial di titik itu (titik yang berjarak ±100 m digabung). Klik lingkaran untuk detail &amp; link Google Maps.</p>
+
+  <div class="box">
+    <table>
+      <thead><tr><th>Promotor</th><th>Rayon</th><th class="r">Head trial</th><th class="r">Titik lokasi</th><th class="r">Radius sebaran</th><th>Peta</th></tr></thead>
+      <tbody id="reach"></tbody>
+    </table>
+  </div>
+
+  <footer><span id="src"></span><span>Develop Program By Nurman Catra</span></footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+(async function () {
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let data;
+  try {
+    const r = await fetch('/data/trial_promotor.json', { cache: 'no-store' });
+    data = await r.json();
+  } catch (e) {
+    $('sub').textContent = 'Gagal memuat data: ' + e.message;
+    return;
+  }
+  const P = Object.fromEntries(data.promotor.map((p) => [p.id, p]));
+  const RAYON = ['Surabaya Timur', 'Surabaya Barat', 'Sidoarjo Timur', 'Sidoarjo Barat', 'Gresik'];
+  $('sub').textContent = `${data.cycle} · data s/d ${data.data_sampai}`;
+  $('src').textContent = 'Sumber: ' + data.sumber;
+
+  const map = L.map('map', { zoomControl: true }).setView([-7.30, 112.71], 11);
+  const tiles = {
+    terang: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles &copy; Esri' }),
+    gelap: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles &copy; Esri' })
+  };
+  let tema = 'terang';
+  try { tema = localStorage.getItem('peta_tema') || 'terang'; } catch (e) {}
+  $('f-tema').value = tema;
+  tiles[tema].addTo(map);
+  $('f-tema').onchange = (e) => {
+    map.removeLayer(tiles[tema]); tema = e.target.value; tiles[tema].addTo(map);
+    try { localStorage.setItem('peta_tema', tema); } catch (err) {}
+  };
+
+  const layer = L.layerGroup().addTo(map);
+  $('f-rayon').innerHTML = '<option value="all">Semua rayon</option>' + RAYON.map((r) => `<option>${esc(r)}</option>`).join('');
+
+  const km = (a, b, c, d) => { const R = 6371, t = Math.PI / 180, x = Math.sin((c - a) * t / 2) ** 2 + Math.cos(a * t) * Math.cos(c * t) * Math.sin((d - b) * t / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); };
+  const gmap = (la, lo) => `https://www.google.com/maps?q=${la},${lo}`;
+
+  function fillProm() {
+    const ry = $('f-rayon').value, cur = $('f-prom').value;
+    const list = data.promotor.filter((p) => ry === 'all' || p.rayon === ry);
+    $('f-prom').innerHTML = `<option value="all">Semua promotor (${list.length})</option>` + list.map((p) => `<option value="${p.id}">${esc(p.nama)}</option>`).join('');
+    $('f-prom').value = list.some((p) => p.id === cur) ? cur : 'all';
+  }
+
+  function render() {
+    const ry = $('f-rayon').value, pr = $('f-prom').value;
+    const proms = data.promotor.filter((p) => (ry === 'all' || p.rayon === ry) && (pr === 'all' || p.id === pr));
+    const ids = new Set(proms.map((p) => p.id));
+    const pts = data.titik.filter((t) => ids.has(t.p));
+    layer.clearLayers();
+    const maxHead = Math.max(1, ...data.titik.map((t) => t.head));
+    pts.forEach((t) => {
+      const p = P[t.p];
+      const radius = 10 + Math.sqrt(t.head / maxHead) * 26;
+      L.circleMarker([t.lat, t.lng], { radius, color: '#FFFFFF', weight: 2, fillColor: p.color, fillOpacity: 0.8 })
+        .bindTooltip(`${esc(p.nama)} · ${t.head} head`)
+        .bindPopup(`<b>${esc(p.nama)}</b><br>${esc(p.rayon)}<br>${t.head} head trial · ${esc(t.lokasi)}<br>BUMO teratas: ${esc(t.bumo_top.join(', '))}<br>Tanggal: ${esc(t.tanggal.join(', '))}<br><a href="${gmap(t.lat, t.lng)}" target="_blank" rel="noopener">Buka di Google Maps</a>`)
+        .addTo(layer);
+    });
+    if (pts.length) map.fitBounds(L.latLngBounds(pts.map((t) => [t.lat, t.lng])).pad(0.6), { maxZoom: 14 });
+
+    const head = pts.reduce((a, t) => a + t.head, 0);
+    const aktif = proms.filter((p) => pts.some((t) => t.p === p.id)).length;
+    const target = proms.reduce((a, p) => a + p.target_td, 0);
+    $('stats').innerHTML = [
+      [head + ' head', 'trial terpetakan'],
+      [pts.length, 'titik lokasi'],
+      [`${aktif} / ${proms.length}`, 'promotor punya titik'],
+      [target ? Math.round(head / target * 100) + '%' : '—', 'vs target s/d hari ini (' + target + ')']
+    ].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+
+    $('legend').innerHTML = proms.map((p) => `<span><i style="background:${p.color}"></i>${esc(p.nama)}</span>`).join('');
+
+    $('reach').innerHTML = proms.map((p) => {
+      const g = pts.filter((t) => t.p === p.id);
+      if (!g.length) return `<tr><td>${esc(p.nama)}</td><td>${esc(p.rayon)}</td><td class="r">0</td><td class="r">0</td><td class="r">—</td><td>Belum ada titik</td></tr>`;
+      const h = g.reduce((a, t) => a + t.head, 0);
+      const la = g.reduce((a, t) => a + t.lat * t.head, 0) / h, lo = g.reduce((a, t) => a + t.lng * t.head, 0) / h;
+      const rad = Math.max(...g.map((t) => km(la, lo, t.lat, t.lng)));
+      return `<tr><td>${esc(p.nama)}</td><td>${esc(p.rayon)}</td><td class="r">${h}</td><td class="r">${g.length}</td><td class="r">${rad < 0.1 ? '&lt; 0,1 km' : rad.toFixed(1).replace('.', ',') + ' km'}</td><td><a href="${gmap(la.toFixed(5), lo.toFixed(5))}" target="_blank" rel="noopener">Buka</a></td></tr>`;
+    }).join('');
+  }
+
+  $('f-rayon').onchange = () => { fillProm(); render(); };
+  $('f-prom').onchange = render;
+  fillProm();
+  render();
+})();
+</script>
+</body>
+</html>
