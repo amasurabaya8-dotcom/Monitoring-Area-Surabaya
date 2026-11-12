@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monitoring Area Surabaya</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; color: #1f2937; }
+    h1 { font-size: 1.4rem; }
+    .row { display: flex; justify-content: space-between; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; margin: 8px 0; }
+    .ok { color: #15803d; font-weight: 600; } .bad { color: #b91c1c; font-weight: 600; }
+    footer { margin-top: 32px; font-size: .8rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <h1>Monitoring Area Surabaya</h1>
+  <p>Status koneksi GitHub → Cloudflare → Supabase</p>
+  <div id="status">Memeriksa…</div>
+  <p><a href="/peta-trial.html">→ Peta penetrasi trial promotor</a></p>
+  <footer>Develop Program By Nurman Catra</footer>
+  <script>
+    const label = { worker: "Cloudflare Worker", supabase_url_set: "SUPABASE_URL", supabase_key_set: "SUPABASE_ANON_KEY", supabase: "Koneksi Supabase" };
+    fetch("/api/health").then(r => r.json()).then(d => {
+      document.getElementById("status").innerHTML = Object.entries(d).map(([k, v]) => {
+        const good = v === true || v === "ok";
+        return `<div class="row"><span>${label[k] || k}</span><span class="${good ? "ok" : "bad"}">${v === true ? "✓ terpasang" : v === false ? "✗ belum" : v}</span></div>`;
+      }).join("");
+    }).catch(e => { document.getElementById("status").textContent = "Gagal: " + e.message; });
+  </script>
+</body>
+</html>
