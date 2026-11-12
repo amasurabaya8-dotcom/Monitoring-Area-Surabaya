@@ -345,25 +345,21 @@
           <h3 style="margin: 0; font-size: 15px">Peta Sebaran Trial · <a href="/peta-trial.html">buka peta jalan</a></h3>
           <span style="font-size: 12px; color: #374151">{{kpi.mapInfo}}</span>
         </div>
-        <div style="{{kpi.mapStyle}}">
-          <sc-for list="{{kpi.refs}}" as="c" hint-placeholder-count="3">
-            <span style="{{c.style}}"><span style="width: 8px; height: 8px; background: #6B7280; transform: rotate(45deg); flex: 0 0 auto"></span>{{c.n}}</span>
-          </sc-for>
-          <sc-for list="{{kpi.dots}}" as="d" hint-placeholder-count="5">
-            <a href="{{d.url}}" target="_blank" rel="noopener" aria-label="{{d.tip}}" title="{{d.tip}}" style="{{d.style}}">{{d.n}}</a>
-          </sc-for>
-          <div style="{{kpi.scaleBox}}">
-            <span style="display: block; height: 4px; width: 100%; background: #374151; border-radius: 2px"></span>
-            <span>5 km</span>
-          </div>
-          <span style="position: absolute; right: 10px; top: 8px; font-size: 12px; font-weight: 700; color: #374151">U ↑</span>
+        <div style="display: flex; justify-content: flex-end">
+          <label for="kpi-map-tema" style="display: flex; gap: 8px; align-items: center; font-size: 12px; color: #374151">Tampilan peta
+            <select id="kpi-map-tema" style="min-height: 32px; font-family: inherit; font-size: 13px; font-weight: 600; color: #111827; background: #FFFFFF; border: 1px solid #D5DAE1; border-radius: 6px; padding: 4px 8px">
+              <option value="terang">Terang</option>
+              <option value="gelap">Gelap</option>
+            </select>
+          </label>
         </div>
+        <div id="kpi-map" role="region" aria-label="Peta sebaran trial" style="height: 460px; border-radius: 12px; border: 1px solid #D5DAE1; background: #E9EBEE; overflow: hidden"></div>
         <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px">
           <sc-for list="{{kpi.mapLeg}}" as="g" hint-placeholder-count="4">
             <span style="display: flex; gap: 6px; align-items: center"><span style="{{g.dot}}"></span>{{g.n}}</span>
           </sc-for>
         </div>
-        <span style="font-size: 12px; color: #4B5563">Titik = lokasi trial (dikelompokkan ±100 m), angka = jumlah head. Klik titik untuk buka di Google Maps. Belah ketupat abu-abu = pusat kota sebagai patokan.</span>
+        <span style="font-size: 12px; color: #4B5563">Ukuran lingkaran = jumlah head trial di titik itu (titik berjarak ±100 m digabung). Klik lingkaran untuk detail &amp; link Google Maps.</span>
       </section>
 
       <section aria-label="Jangkauan per promotor" style="flex: 1 1 420px; min-width: 0; background: #FFFFFF; border: 1px solid #E3E6EB; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px">

@@ -92,6 +92,9 @@
           for (var i = 0; i < tpl.childNodes.length; i++) render(tpl.childNodes[i], vals, frag, false);
           root.replaceChildren(frag);
           if (focusId) { var f = document.getElementById(focusId); if (f) f.focus(); }
+          if (typeof window.afterRender === 'function') {
+            try { window.afterRender(vals); } catch (e) { console.warn('afterRender:', e); }
+          }
         };
         comp._render();
       } catch (e) {

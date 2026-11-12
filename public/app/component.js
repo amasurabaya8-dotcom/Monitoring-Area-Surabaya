@@ -241,7 +241,7 @@ class Component extends DCLogic {
     // ----- peta sebaran trial
     var B = { n: -7.08, s: -7.52, w: 112.55, e: 112.85 };
     var px = function (lat, lng) { return { x: Math.min(98, Math.max(2, (lng - B.w) / (B.e - B.w) * 100)), y: Math.min(98, Math.max(2, (B.n - lat) / (B.n - B.s) * 100)) }; };
-    var pcol = ['#2563EB', '#EA580C', '#059669', '#7C3AED', '#DB2777', '#0891B2', '#CA8A04', '#4B5563'];
+    var pcol = ['#E0B341', '#8FB3BD', '#5B6290', '#7FB2E0', '#D9822B', '#4F9D69', '#B05FA0', '#9A8C7A'];
     var colOf = {}; KPI.promotor.forEach(function (p, i) { colOf[p.id] = pcol[i % pcol.length]; });
     var nmOf = {}; KPI.promotor.forEach(function (p) { nmOf[p.id] = p.nama; });
     var gmap = function (la, lo) { return 'https://www.google.com/maps?q=' + la + ',' + lo; };
@@ -276,6 +276,7 @@ class Component extends DCLogic {
 
     var kpi = {
       dots: dots, refs: refs, reach: reach,
+      mapPts: clOrd.map(function (k) { var c = cl[k], la = Math.round(c.la / c.n * 100000) / 100000, lo = Math.round(c.lo / c.n * 100000) / 100000; return { lat: la, lng: lo, n: c.n, color: colOf[c.p], nama: nmOf[c.p], lokasi: Object.keys(c.lok).join(', '), url: gmap(la, lo) }; }),
       mapLeg: proms.map(function (p) { return { n: short(p.nama), dot: 'width: 10px; height: 10px; border-radius: 50%; background: ' + colOf[p.id] }; }),
       mapInfo: geo.length + ' head di ' + clOrd.length + ' titik lokasi · ' + proms.filter(function (p) { return geo.some(function (r) { return r[0] === p.id; }); }).length + ' dari ' + proms.length + ' promotor',
       mapStyle: 'position: relative; width: 100%; max-width: 560px; margin: 0 auto; aspect-ratio: 30 / 44; box-sizing: border-box; background-color: #F3F6FA; background-image: linear-gradient(#E3E8EF 1px, transparent 1px), linear-gradient(90deg, #E3E8EF 1px, transparent 1px); background-size: 10% 6.818%; border: 1px solid #D5DAE1; border-radius: 10px; overflow: hidden',
