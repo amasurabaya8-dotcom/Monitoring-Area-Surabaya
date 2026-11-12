@@ -38,7 +38,8 @@ export default {
       };
       if (out.supabase_url_set && out.supabase_key_set) {
         try {
-          const r = await supabase(env, "");
+          // cek lewat tabel kecil (root /rest/v1/ bisa ditolak untuk publishable key)
+          const r = await supabase(env, "rayon?select=id&limit=1");
           out.supabase = r.ok ? "ok" : `error ${r.status}`;
         } catch (e) {
           out.supabase = `error: ${e.message}`;
