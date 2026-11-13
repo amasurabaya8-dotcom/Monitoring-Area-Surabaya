@@ -61,6 +61,17 @@
           <span style="font-size: 12px; background: #F1F3F6; color: #374151; border-radius: 999px; padding: 4px 10px">No. eDoc {{brief.nomor}}</span>
           <span style="font-size: 12px; background: #F1F3F6; color: #374151; border-radius: 999px; padding: 4px 10px">{{brief.approval}}</span>
         </div>
+        <sc-if value="{{pdf.has}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px">
+            <span style="display: flex; gap: 6px; align-items: center; font-size: 12px; color: #374151">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>
+              {{pdf.file}} · {{pdf.info}}
+            </span>
+            <button type="button" onClick="{{pdf.toggle}}" aria-pressed="{{pdf.open}}" style="{{pdf.btnStyle}}">{{pdf.btnLabel}}</button>
+            <a href="{{pdf.url}}" target="_blank" rel="noopener" style="min-height: 36px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 8px; border: 1px solid #D5DAE1; font-size: 13px; font-weight: 600; text-decoration: none">Buka di tab baru</a>
+            <a href="{{pdf.url}}" download="{{pdf.file}}" style="min-height: 36px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 8px; border: 1px solid #D5DAE1; font-size: 13px; font-weight: 600; text-decoration: none">Unduh</a>
+          </div>
+        </sc-if>
       </div>
       <div style="flex: 1 1 260px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; align-content: start">
         <div style="background: #E6F4F1; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
@@ -77,6 +88,25 @@
         </div>
       </div>
     </section>
+
+    <sc-if value="{{pdf.open}}" hint-placeholder-val="{{ false }}">
+      <section aria-label="Dokumen PDF brief" style="background: #FFFFFF; border: 1px solid #E3E6EB; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center">
+          <h3 style="margin: 0; font-size: 15px">PDF · {{pdf.file}}</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+            <label for="pdf-tampilan" style="font-size: 12px; color: #374151">Tampilan</label>
+            <select id="pdf-tampilan" value="{{pdf.mode}}" onChange="{{pdf.pickMode}}" style="min-height: 36px; font-family: inherit; font-size: 13px; font-weight: 600; color: #111827; background: #FFFFFF; border: 1px solid #D5DAE1; border-radius: 6px; padding: 4px 8px">
+              <sc-for list="{{pdf.modes}}" as="o" hint-placeholder-count="3">
+                <option value="{{o.v}}">{{o.l}}</option>
+              </sc-for>
+            </select>
+            <button type="button" onClick="{{pdf.toggle}}" style="min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #D5DAE1; background: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer">Tutup</button>
+          </div>
+        </div>
+        <iframe title="{{pdf.file}}" src="{{pdf.src}}" style="{{pdf.frameStyle}}"></iframe>
+        <span style="font-size: 12px; color: #4B5563">Di HP, PDF biasanya tidak tampil di dalam halaman. Pakai tombol "Buka di tab baru".</span>
+      </section>
+    </sc-if>
 
     <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
 

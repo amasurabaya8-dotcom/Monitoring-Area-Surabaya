@@ -2,7 +2,7 @@
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { bi: 0, sid: null, ry: 'all', wk: 'auto', view: 'program', pr: 'all' };
+    this.state = { bi: 0, sid: null, ry: 'all', wk: 'auto', view: 'program', pr: 'all', pdfOpen: false, pdfMode: 'lebar' };
   }
   renderVals() {
     var self = this;
@@ -290,6 +290,21 @@ class Component extends DCLogic {
     };
 
     return {
+      pdf: (function () {
+        var p = brief.pdf || null, open = !!p && self.state.pdfOpen, mode = self.state.pdfMode || 'lebar';
+        var M = { lebar: ['Pas lebar', 'FitH', '80vh'], halaman: ['Satu halaman penuh', 'Fit', '80vh'], ringkas: ['Ringkas', 'FitH', '420px'] };
+        var m = M[mode] || M.lebar;
+        return {
+          has: !!p, open: open, file: p ? p.file : '', url: p ? p.url : '', info: p ? p.pages + ' hlm · ' + p.mb + ' MB' : '',
+          src: p ? p.url + '#view=' + m[1] + '&toolbar=1' : '', mode: mode,
+          modes: Object.keys(M).map(function (k) { return { v: k, l: M[k][0] }; }),
+          pickMode: function (e) { self.setState({ pdfMode: e && e.target ? e.target.value : 'lebar' }); },
+          toggle: function () { self.setState({ pdfOpen: !self.state.pdfOpen }); },
+          btnLabel: open ? 'Tutup PDF' : 'Lihat PDF di aplikasi',
+          btnStyle: 'min-height: 36px; padding: 0 12px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; ' + (open ? 'background: #FFFFFF; color: ' + accent + '; border: 1px solid ' + accent : 'background: ' + accent + '; color: #FFFFFF; border: 1px solid ' + accent),
+          frameStyle: 'width: 100%; height: ' + m[2] + '; min-height: 360px; border: 1px solid #D5DAE1; border-radius: 8px; background: #F4F5F7'
+        };
+      })(),
       isProgram: view !== 'kpi', isKpi: view === 'kpi', kpi: kpi,
       goProgram: function () { self.setState({ view: 'program' }); }, goKpi: function () { self.setState({ view: 'kpi' }); },
       navProgramStyle: navBtn(view !== 'kpi'), navKpiStyle: navBtn(view === 'kpi'),
